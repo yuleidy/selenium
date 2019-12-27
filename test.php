@@ -25,6 +25,7 @@ require_once('vendor/autoload.php');
 
 // start Chrome with 5 second timeout
 $host = 'http://localhost:4444/wd/hub'; // this is the default
+//$host = 'http://localhost:85/wd/hub'; // this is the default
 $capabilities = DesiredCapabilities::chrome();
 $driver = RemoteWebDriver::create($host, $capabilities, 5000);
 
