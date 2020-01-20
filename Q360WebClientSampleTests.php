@@ -1,6 +1,5 @@
 <?php
 
-
 use Facebook\WebDriver\Interactions\WebDriverActions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
@@ -12,7 +11,7 @@ use Facebook\WebDriver\WebDriverPoint;
 
 use PHPUnit\Framework\TestCase;
 
-require_once'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 
 class Q360WebClientSampleTests
@@ -98,10 +97,6 @@ class Q360WebClientSampleTests
                 'userid' => 'ygonzalez',
                 'password' => 'letmein',
             ),
-            /*array(
-                'userid' => 'bmudry',
-                'password' => 'letmein',
-            ),*/
         );
         return $credentials;
     }
@@ -110,9 +105,11 @@ class Q360WebClientSampleTests
 
         //these values here might be coming from a config file or some source other than the code.
         $userid = 'ygonzalez';
-        $pwd = 'letmein';
+        //$pwd = 'letmein';
+        $pwd = '1234';
 
-        $url = 'https://w360-qa-q360dev.solutions360.com';
+        //$url = 'https://w360-qa-q360dev.solutions360.com';
+        $url = 'http://q360webclient.test';
 
         $driver = self::$driver;
         //1. get the driver to navigate to the login page
@@ -136,34 +133,36 @@ class Q360WebClientSampleTests
         sleep(3);
     }
 
-    public function _testMenus() {
+    public function testMenus() {
         $driver = self::$driver;
 
         //-----------testing the menus
-        //$accountingMenuOptionXPath = '//*[@id="dhxId_7o8fOBoZwv2h_5265350"]';
-        //$accountingMenuOptionXPath = '//*[@id="dhxId_2T7EjZ5M57Rk_5265350"]';
-        $accountingMenuOptionXPath = '/html/body/div[51]/div[1]/div[3]/div[1]/div[5]';
-        $accountingMenuOptionSelector = '#dhxId_7o8fOBoZwv2h_5265350';
-        $xPathCustomerMenuOption = '//*[@id="dhxId_7o8fOBoZwv2h_5265351"]/td[2]/div';
+
+        //$(document).find(".sub_item_text:contains('General Codes')").parents('.sub_item,.sub_item_selected').trigger('click')
+        //Footer.componentGet('main_edit').click()
+        //to get the current window: s3.screens.windowsGet()[s3.screens.activeWindowIDGet()]
+        //$(s3.screens.windowsGet()[s3.screens.activeWindowIDGet()].dhtmlxWindowCellGet().getFrame().contentWindow.document).find('body').css('background-color', 'red')
 
         //switch to main window
         $driver->switchTo()->defaultContent();
 
         //$accountingMenu = $driver->findElement(WebDriverBy::cssSelector($accountingMenuOptionSelector));
-        $text = $driver->findElement(WebDriverBy::xpath("//*[contains(@id,'5265350')]"))->getText();
+        //$text = $driver->findElement(WebDriverBy::cssSelector(".sub_item_text:contains('General Codes')"))->getText();
         //$this->assertEquals('Accounting1', $text);
 
-        $accountingMenu = $driver->findElement(WebDriverBy::xpath('//*[contains(@id,"5265350")]'));
-        $actions = new WebDriverActions($driver);
-        $actions->moveToElement($accountingMenu)->perform();
-        $element = $driver->findElement(WebDriverBy::xpath('//*[contains(@id,"5265351")]'));
+        //$accountingMenu = $driver->findElement(WebDriverBy::xpath('//*[contains(@id,"5265350")]'));
+        //$accountingMenu = $driver->findElement(WebDriverBy::cssSelector(".sub_item .sub_item_text:contains('Customer')"));
+        //$actions = new WebDriverActions($driver);
+        //$actions->moveToElement($accountingMenu)->perform();
+        $element = $driver->findElement(WebDriverBy::cssSelector(".sub_item .sub_item_text:contains('Customer')"));
 
-        fwrite(STDOUT, 'temp path '.print_r($element, TRUE));
+        //fwrite(STDOUT, 'temp path '.print_r($element, TRUE));
 
         $tagName = $element->getTagName();
+        fwrite(STDOUT, 'customer menu tag name: '.print_r($tagName, TRUE));
         $element->click();
         //get text
-        $this->assertEquals('Accounting2', $tagName);
+        $this->assertEquals('Customer', $tagName);
     }
 
     public function _testCreateServiceCall() {

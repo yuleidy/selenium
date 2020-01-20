@@ -95,84 +95,100 @@ class SimpleQ360Test extends TestCase
         $this->assertEquals('Sign in | Q360', $loginPageTitle);
     }
 
+    private function isLoggedIn() {
+        return (self::$driver->getTitle() == 'Q360');
+    }
+
     private function login() {
         $driver = self::$driver;
-        $pageTitle = $driver->getTitle();
-        if ($pageTitle == 'Sign in | Q360') {
-            //login
+        if (!$this->isLoggedIn()) { //means it's logged out so we need to login!
             $userid = 'ygonzalez';
             $pwd = '1234';
-            //find the login form
-            $form = $driver->findElement(WebDriverBy::name('sign-in'));
             //set the values to the text fields for user and pwd
             $driver->findElement(WebDriverBy::id('userid'))->sendKeys($userid);
             $driver->findElement(WebDriverBy::id('password'))->sendKeys($pwd);
-            //submit the form with the given values.
-            $form->submit();
-            //give the page time to load.
-            sleep(3);
-            //# set the timeout to 20 seconds, and the time in interval to 1000 ms
-            //$driver->wait(10, 1000)->until(WebDriverExpectedCondition::titleIs('Q360'));
+            //find the login form
+            $driver->findElement(WebDriverBy::name('sign-in'))->submit();
+            sleep(3); //give the page time to load.
         }
-        $homePageTitle = $driver->getTitle();
-        return ('Q360' == $homePageTitle);
     }
 
     private function logout() {
         $driver = self::$driver;
-        $pageTitle = $driver->getTitle();
-        if ($pageTitle == 'Q360') { //means it's logged in, so it's safe to logout.
+        if ($this->isLoggedIn()) { //means it's logged in, so we need to logout.
+            //find the logout menu option
             $logoutMenu = $driver->findElement(WebDriverBy::xpath("//div[contains(text(), 'Sign Out') and @class='sub_item_text']"));
+            //click the logout
             $driver->executeScript("arguments[0].click();", array($logoutMenu));
         }
-        $homePageTitle = $driver->getTitle();
-        return ('Sign in | Q360' == $homePageTitle);
     }
 
     public function testGetDriverBySamples() {
         $driver = self::$driver;
         //examples live here: https://gist.github.com/aczietlow/7c4834f79a7afd920d8f
 
+        //this happens in the login page, so we need to logout first
+        if ($this->isLoggedIn()) $this->logout();
+
         //1. by class name:
         $s1 = $driver->findElement(WebDriverBy::className('legend'))->getText();
-        fwrite(STDOUT, 'by class name: '.print_r($s1, TRUE));
+        fwrite(STDOUT, 'by class name: ' . print_r($s1, TRUE));
         //2. by id:
         $s2 = $driver->findElement(WebDriverBy::id('footer'))->getText();
-        fwrite(STDOUT, 'by id: '.print_r($s2, TRUE));
+        fwrite(STDOUT, 'by id: ' . print_r($s2, TRUE));
         //3. by tag name:
         $s3 = $driver->findElement(WebDriverBy::tagName('div'))->getText();
-        fwrite(STDOUT, 'by tag name: '.print_r($s3, TRUE));
+        fwrite(STDOUT, 'by tag name: ' . print_r($s3, TRUE));
         //4. by css selector
         $s4 = $driver->findElement(WebDriverBy::cssSelector('p.legend'))->getText();
-        fwrite(STDOUT, 'by css selector: '.print_r($s4, TRUE));
+        fwrite(STDOUT, 'by css selector: ' . print_r($s4, TRUE));
         //5. by link text
         $s5 = $driver->findElement(WebDriverBy::linkText("I forgot my password"))->getText();
-        fwrite(STDOUT, 'by link text: '.print_r($s5, TRUE));
+        fwrite(STDOUT, 'by link text: ' . print_r($s5, TRUE));
         $this->assertEquals('I forgot my password', $s5);
         //6. by partial link text
         $s6 = $driver->findElement(WebDriverBy::partialLinkText("password"))->getText();
-        fwrite(STDOUT, 'by partial link text: '.print_r($s6, TRUE));
+        fwrite(STDOUT, 'by partial link text: ' . print_r($s6, TRUE));
         $this->assertEquals('I forgot my password', $s6);
         //7. by name
         $s7 = $driver->findElement(WebDriverBy::name("sign-in"))->getText();
-        fwrite(STDOUT, 'by name: '.print_r($s7, TRUE));
+        fwrite(STDOUT, 'by name: ' . print_r($s7, TRUE));
         //8. by xpath
         $s8 = $driver->findElement(WebDriverBy::xpath("//*[@id=\"mainContent\"]/form/div/p[2]/button"))->getText();
-        fwrite(STDOUT, 'by xpath: '.print_r($s8, TRUE));
+        fwrite(STDOUT, 'by xpath: ' . print_r($s8, TRUE));
         $this->assertEquals('Submit', $s8);
 
         //$driver->switchTo()->defaultContent();
         //$driver->manage()->window()->maximize();
+        //fwrite(STDOUT, '-------------LOGGED IN!-------------');
+    }
 
-        if ($this->login()) {
-            if ($this->logout()) {
-                fwrite(STDOUT, '---------LOGGED OUT OK!--------------');
-            }
-        }
-        else {
-            fwrite(STDOUT, '-------------NOT LOGGED IN!-------------');
-        }
-        sleep(5);
+    public function testQuickSearch_WithCustomerNo() {
+        $driver = self::$driver;
+        $customerNo = 'YTI001';
+        if (!$this->isLoggedIn()) $this->login();
+
+        $driver->findElement(WebDriverBy::id("viewport-quicksearch"))->sendKeys($customerNo);
+        $driver->findElement(WebDriverBy::id("viewport-quicksearch-btn"))->click();
+        sleep(10);
+        fwrite(STDOUT, '-------------AFTER SEARCH!-------------');
+        //assertions
+        $driver->findElement(WebDriverBy::cssSelector("//div[contains(text(), 'Customer #YTI001: Yuleidy Test Inactive Company')]"));
+    }
+
+    public function _testCreateServiceCall() {
+        //steps:
+        //1.Main menu->Service
+        //2.->Customers
+        //3.->click the search all button
+        //4.->select one customer from the list and click
+        //5.->Click on the Srv Calls inner menu
+        //6.->+add button
+        //7.->fill in the form: add the problem, description and contact
+        //8.->click save button!
+        // Done!
+
+        //Another way by searching for a specific customer in the quick search and take it from step
     }
 
     public function _testMenus() {
