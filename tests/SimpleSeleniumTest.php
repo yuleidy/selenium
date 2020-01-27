@@ -9,7 +9,7 @@ use Facebook\WebDriver\WebDriverPoint;
 
 use PHPUnit\Framework\TestCase;
 
-require_once'vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
 class SimpleSeleniumTest extends TestCase
 {
@@ -19,9 +19,8 @@ class SimpleSeleniumTest extends TestCase
     /**
      * Open the Chrome browser just once to be reused on each test.
      */
-    public static function setupBeforeClass()
+    public static function setupBeforeClass() : void
     {
-        //fwrite(STDOUT, 'server var '.print_r($_SERVER, TRUE));
         //$host = 'http://'.$_SERVER['REMOTE_ADDR'].':4444/wd/hub'; // this is the default port
         $host = 'http://localhost:4444/wd/hub'; // this is the default port
         $driver = RemoteWebDriver::create($host, DesiredCapabilities::chrome());
@@ -37,13 +36,13 @@ class SimpleSeleniumTest extends TestCase
      * Before each test the same browser instance will be reused,
      * so clear cookies, local storage, etc., or open a new incognito tab
      */
-    public function setUp() {}
+    public function setUp() : void  {}
 
     /**
      * After all tests have finished, quit the browser,
      * even if an exception was thrown and/or tests fail
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass() : void
     {
         // Close the browser
         self::$driver->quit();
