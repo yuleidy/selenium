@@ -107,33 +107,4 @@ class SimpleQ360Test extends TestCase
         //$driver->switchTo()->defaultContent();
         //$driver->manage()->window()->maximize();
     }
-
-    public function _testDealingWithFrames() {
-        $driver = self::$driver;
-
-        $my_frame = $driver->findElement(WebDriverBy::id('my_frame'));
-        $driver->switchTo()->frame($my_frame);
-
-        $driver->switchTo()->defaultContent();
-    }
-
-    public function _testMenus() {
-        $driver = self::$driver;
-
-        //-----------testing the menus
-
-        //switch to main window
-        $driver->switchTo()->defaultContent();
-
-        $accountingMenu = $driver->findElement(WebDriverBy::cssSelector(".sub_item .sub_item_text:contains('Customer')"));
-        $actions = new WebDriverActions($driver);
-        $actions->moveToElement($accountingMenu)->perform();
-        $element = $driver->findElement(WebDriverBy::cssSelector(".sub_item_text:contains('General Codes')"));
-
-        $tagName = $element->getTagName();
-        fwrite(STDOUT, 'customer menu tag name: '.print_r($tagName, TRUE));
-        $element->click();
-        //get text
-        $this->assertEquals('Customer', $tagName);
-    }
 }

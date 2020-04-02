@@ -84,7 +84,7 @@ class QuoteFinanceTest extends TestCase
         $extMenu = $driver->findElement(WebDriverBy::cssSelector("div[data-componentid='main_extendedmenu']"));
         $extMenu->click();
         $driver->executeScript("arguments[0].click();", array($extMenu));
-        sleep(self::$helper->getWaitingTimes('m'));
+        sleep(self::$helper->getWaitingTimes('l'));
 
         $financeOptionMenu = $driver->findElement(WebDriverBy::xpath("//span[contains(text(), 'Get Finance Options')]"));
         $financeOptionMenu->click();
